@@ -4,8 +4,8 @@ import java.io.File
 import java.net.{URI, URL}
 import java.util.UUID
 
-import scala.annotation.compileTimeOnly
 import scala.reflect.api.{Symbols, TreeCreator, Universe}
+import scala.reflect.internal.annotations.compileTimeOnly
 
 /**
   * Serialize a runtime to a compiler-time Scala AST
@@ -43,7 +43,6 @@ object Q {
 
     // TODO: import management
     private[thoughtworks] final def fullyQualifiedSymbolTree(symbol: Symbols#Symbol): universe.Tree = {
-      symbol.fullName
       val owner = symbol.owner
       val name = newTermName(symbol.name.encodedName.toString)
       if (isRootPackage(owner)) {
