@@ -21,7 +21,7 @@ object QTests extends TestSuite {
 
   override def tests = this {
     * - {
-      val code = showCode(MacroBundle[universe.type](universe).fullyQualifiedTreeOfSymbol(definitions.NilModule))
+      val code = showCode(MacroBundle[universe.type](universe).fullyQualifiedSymbolTreeWithRootPrefix(definitions.NilModule))
       code ==> "_root_.scala.collection.immutable.Nil"
     }
 

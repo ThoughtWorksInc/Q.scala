@@ -4,7 +4,7 @@ import java.io.File
 import java.net.{URI, URL}
 import java.util.UUID
 
-
+import scala.annotation.compileTimeOnly
 import scala.reflect.api.{Symbols, TreeCreator, Universe}
 
 /**
@@ -21,17 +21,45 @@ object Q {
     import universe._
 
     /**
-      * Make [[Q.implicitDynamicLift]] be overloaded.
-      * The implicit value will be disabled in local scope because of this overloading.
+      * Aims to disable the implicit value [[Q.implicitDynamicLift]] in this [[MacroBundle]] scope.
       */
+    @compileTimeOnly("This method should never be called!")
     private def implicitDynamicLift = ???
 
-    private[thoughtworks] final def fullyQualifiedTreeOfSymbol(symbol: Symbols#Symbol): universe.Tree = {
+    private def isRootPackage(symbol: Symbols#Symbol): Boolean = {
+      if (symbol.name == nme.ROOTPKG) {
+        true
+      } else if (symbol.owner.owner == symbol.owner) {
+        true
+      } else {
+        symbol match {
+          case internalSymbol: scala.reflect.internal.Symbols#Symbol if internalSymbol.isRoot || internalSymbol.isRootPackage =>
+            true
+          case _ =>
+            false
+        }
+      }
+    }
+
+    // TODO: import management
+    private[thoughtworks] final def fullyQualifiedSymbolTree(symbol: Symbols#Symbol): universe.Tree = {
+      symbol.fullName
       val owner = symbol.owner
-      if (owner == owner.owner) {
+      val name = newTermName(symbol.name.encodedName.toString)
+      if (isRootPackage(owner)) {
+        Ident(name)
+      } else {
+        val ownerTree = fullyQualifiedSymbolTree(owner)
+        Select(ownerTree, name)
+      }
+    }
+
+    private[thoughtworks] final def fullyQualifiedSymbolTreeWithRootPrefix(symbol: Symbols#Symbol): universe.Tree = {
+      if (isRootPackage(symbol)) {
         q"_root_"
       } else {
-        val ownerTree = fullyQualifiedTreeOfSymbol(owner)
+        val owner = symbol.owner
+        val ownerTree = fullyQualifiedSymbolTreeWithRootPrefix(owner)
         val name = newTermName(symbol.name.encodedName.toString)
         Select(ownerTree, name)
       }
@@ -57,7 +85,7 @@ object Q {
         case uuid: UUID => q"""_root_.java.util.UUID.fromString(${uuid.toString})"""
         case array: Array[_] =>
           import scala.reflect.runtime.currentMirror
-          val elementTypeTree = fullyQualifiedTreeOfSymbol(currentMirror.classSymbol(array.getClass.getComponentType))
+          val elementTypeTree = fullyQualifiedSymbolTreeWithRootPrefix(currentMirror.classSymbol(array.getClass.getComponentType))
           val elementTrees = (for {
             element <- array
           } yield {
@@ -88,11 +116,11 @@ object Q {
         case _ =>
           val classSymbol = reflect.runtime.currentMirror.classSymbol(value.getClass)
           if (classSymbol.isModuleClass) {
-            fullyQualifiedTreeOfSymbol(classSymbol)
+            fullyQualifiedSymbolTreeWithRootPrefix(classSymbol)
           } else {
             value match {
               case product: Product =>
-                val companionTree = fullyQualifiedTreeOfSymbol(classSymbol)
+                val companionTree = fullyQualifiedSymbolTreeWithRootPrefix(classSymbol)
                 val parameterTreeIterator = for {
                   parameters <- product.productIterator
                 } yield {
