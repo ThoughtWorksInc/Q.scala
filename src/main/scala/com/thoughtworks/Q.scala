@@ -42,7 +42,7 @@ object Q {
     }
 
     // TODO: import management
-    private[thoughtworks] final def fullyQualifiedSymbolTree(symbol: Symbols#Symbol): universe.Tree = {
+    private[thoughtworks] final def fullyQualifiedSymbolTree(symbol: Symbols#Symbol): Tree = {
       val owner = symbol.owner
       val name = newTermName(symbol.name.encodedName.toString)
       if (isRootPackage(owner)) {
@@ -53,14 +53,35 @@ object Q {
       }
     }
 
-    private[thoughtworks] final def fullyQualifiedSymbolTreeWithRootPrefix(symbol: Symbols#Symbol): universe.Tree = {
-      if (isRootPackage(symbol)) {
-        q"_root_"
+    private[thoughtworks] final def fullyQualifiedSymbolTreeWithRootPrefix(symbol: Symbols#Symbol): Tree = {
+      def termTree(symbol: Symbols#Symbol): Tree = {
+        if (isRootPackage(symbol)) {
+          q"_root_"
+        } else {
+          val owner = symbol.owner
+          val ownerTree = termTree(owner)
+          val name = newTermName(symbol.name.encodedName.toString)
+          Select(ownerTree, name)
+        }
+      }
+      if (symbol.isType) {
+        if (isRootPackage(symbol)) {
+          tq"_root_"
+        } else {
+          val owner = symbol.owner
+          val ownerTree = termTree(owner)
+          val name = newTypeName(symbol.name.encodedName.toString)
+          Select(ownerTree, name)
+        }
       } else {
-        val owner = symbol.owner
-        val ownerTree = fullyQualifiedSymbolTreeWithRootPrefix(owner)
-        val name = newTermName(symbol.name.encodedName.toString)
-        Select(ownerTree, name)
+        if (isRootPackage(symbol)) {
+          q"_root_"
+        } else {
+          val owner = symbol.owner
+          val ownerTree = termTree(owner)
+          val name = newTermName(symbol.name.encodedName.toString)
+          Select(ownerTree, name)
+        }
       }
     }
 
@@ -115,11 +136,11 @@ object Q {
         case _ =>
           val classSymbol = reflect.runtime.currentMirror.classSymbol(value.getClass)
           if (classSymbol.isModuleClass) {
-            fullyQualifiedSymbolTreeWithRootPrefix(classSymbol)
+            fullyQualifiedSymbolTreeWithRootPrefix(reflect.runtime.currentMirror.moduleSymbol(value.getClass))
           } else {
             value match {
               case product: Product =>
-                val companionTree = fullyQualifiedSymbolTreeWithRootPrefix(classSymbol)
+                val companionTree = fullyQualifiedSymbolTreeWithRootPrefix(classSymbol.companion)
                 val parameterTreeIterator = for {
                   parameters <- product.productIterator
                 } yield {

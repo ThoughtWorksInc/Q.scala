@@ -20,62 +20,70 @@ object QTests extends TestSuite {
   private def toolbox = currentMirror.mkToolBox()
 
   override def tests = this {
-    * - {
+    "Nil" - {
       val code = showCode(MacroBundle[universe.type](universe).fullyQualifiedSymbolTreeWithRootPrefix(definitions.NilModule))
       code ==> "_root_.scala.collection.immutable.Nil"
     }
 
-    * - {
+    "Some and None" - {
       val value: Any = Some(Some(None))
       val tree = q"$value"
       showCode(tree) ==> "_root_.scala.Some(_root_.scala.Some(_root_.scala.None))"
       toolbox.eval(tree) ==> value
     }
 
-    * - {
+    "Map" - {
       val value: Any = Map(1 -> 2, 4 -> 5, 14 -> 51)
       val tree = q"$value"
       showCode(tree) ==> "_root_.scala.Predef.Map((1).->(2), (4).->(5), (14).->(51))"
       toolbox.eval(tree) ==> value
     }
 
-    * - {
+    "List" - {
       val value: Any = List(1 -> 2, 4 -> 5, 14 -> 51)
       val tree = q"$value"
       showCode(tree) ==> "_root_.scala.Seq(_root_.scala.Tuple2(1, 2), _root_.scala.Tuple2(4, 5), _root_.scala.Tuple2(14, 51))"
       toolbox.eval(tree) ==> value
     }
 
-    * - {
+    "Set" - {
       val value: Any = Set("aaa", "bbb", "ccc")
       val tree = q"$value"
       showCode(tree) ==> """_root_.scala.Predef.Set("aaa", "bbb", "ccc")"""
       toolbox.eval(tree) ==> value
     }
 
-    * - {
+    "Array[Byte]" - {
+      import Q._
+      val value: Any = Array[Byte](1, 2, 100)
+      val tree = q"$value"
+      showCode(tree) ==> """_root_.scala.Array[_root_.scala.Byte](1, 2, 100)"""
+      toolbox.eval(tree) ==> value
+    }
+
+    "Array[String]" - {
       import Q._
       val value: AnyRef = Array("aaa", "bbb", "ccc")
       val tree = q"$value"
-      showCode(tree) ==> """_root_.scala.Array("aaa", "bbb", "ccc")"""
+      showCode(tree) ==> """_root_.scala.Array[_root_.java.lang.String]("aaa", "bbb", "ccc")"""
       toolbox.eval(tree) ==> value
     }
 
-    * - {
+    "Array[UUID]" - {
       val value = Array(UUID.fromString("03a2d643-2241-408f-a960-77cb74c30eee"))
       val tree = q"$value"
-      showCode(tree) ==> """_root_.scala.Array(_root_.java.util.UUID.fromString("03a2d643-2241-408f-a960-77cb74c30eee"))"""
+      showCode(tree) ==> """_root_.scala.Array[_root_.java.util.UUID](_root_.java.util.UUID.fromString("03a2d643-2241-408f-a960-77cb74c30eee"))"""
       toolbox.eval(tree) ==> value
     }
 
-    * - {
+    "File" - {
       val value: Any = new File("my-file.txt")
       val tree = q"$value"
       showCode(tree) ==> """new _root_.java.io.File("my-file.txt")"""
       toolbox.eval(tree) ==> value
     }
 
-    * - {
+    "Int" - {
       import Q._
 
       //      implicit def a = Q.implicitAnyLiftable[universe.type]
