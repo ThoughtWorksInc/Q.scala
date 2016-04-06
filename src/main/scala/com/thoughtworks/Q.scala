@@ -16,6 +16,21 @@ object Q {
 
   import scala.language.experimental.macros
 
+  private[thoughtworks] def isRootPackage(symbol: Symbols#Symbol): Boolean = {
+    if (symbol.name == scala.reflect.runtime.universe.nme.ROOTPKG) {
+      true
+    } else if (symbol.owner.owner == symbol.owner) {
+      true
+    } else {
+      symbol match {
+        case internalSymbol: scala.reflect.internal.Symbols#Symbol if internalSymbol.isRoot || internalSymbol.isRootPackage =>
+          true
+        case _ =>
+          false
+      }
+    }
+  }
+
   private[thoughtworks] final case class MacroBundle[U <: Universe](universe: U) {
 
     import universe._
@@ -26,20 +41,6 @@ object Q {
     @compileTimeOnly("This method should never be called!")
     private def implicitDynamicLift = ???
 
-    private def isRootPackage(symbol: Symbols#Symbol): Boolean = {
-      if (symbol.name == nme.ROOTPKG) {
-        true
-      } else if (symbol.owner.owner == symbol.owner) {
-        true
-      } else {
-        symbol match {
-          case internalSymbol: scala.reflect.internal.Symbols#Symbol if internalSymbol.isRoot || internalSymbol.isRootPackage =>
-            true
-          case _ =>
-            false
-        }
-      }
-    }
 
     // TODO: import management
     private[thoughtworks] final def fullyQualifiedSymbolTree(symbol: Symbols#Symbol): Tree = {
