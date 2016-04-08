@@ -145,7 +145,7 @@ object Q {
                 val parameterTreeIterator = for {
                   parameters <- product.productIterator
                 } yield {
-                  treeOf(parameters)
+                  q"""{${treeOf(parameters)}}"""
                 }
                 Apply(companionTree, parameterTreeIterator.toList)
               case _ =>
