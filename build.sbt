@@ -2,6 +2,8 @@ organization := "com.thoughtworks.q"
 
 name := "q"
 
+crossScalaVersions in ThisBuild := Seq("2.10.6", "2.11.8")
+
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
