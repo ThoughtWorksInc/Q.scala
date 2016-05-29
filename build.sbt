@@ -1,4 +1,4 @@
-organization := "com.thoughtworks.q"
+organization in ThisBuild := "com.thoughtworks.q"
 
 name := "q"
 
