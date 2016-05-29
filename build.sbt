@@ -2,7 +2,7 @@ organization in ThisBuild := "com.thoughtworks.q"
 
 name := "q"
 
-crossScalaVersions in ThisBuild := Seq("2.10.6", "2.11.8", "2.12.0-M4")
+crossScalaVersions in ThisBuild := Seq("2.10.6", "2.11.8", "2.12.0-M3")
 
 addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
 
