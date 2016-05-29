@@ -141,7 +141,7 @@ object Q {
           } else {
             value match {
               case product: Product =>
-                val companionTree = fullyQualifiedSymbolTreeWithRootPrefix(classSymbol.companion)
+                val companionTree = fullyQualifiedSymbolTreeWithRootPrefix(classSymbol.companionSymbol)
                 val parameterTreeIterator = for {
                   parameters <- product.productIterator
                 } yield {
