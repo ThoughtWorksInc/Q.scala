@@ -90,6 +90,7 @@ object Q {
       import universe._
       value match {
         case null => q"""null"""
+        case expr: Expr[_] => q"""_root_.scala.reflect.runtime.universe.reify($expr)"""
         case typed: String => q"""$typed"""
         case typed: Unit => q"""$typed"""
         case typed: Char => q"""$typed"""

@@ -94,6 +94,16 @@ object QTests extends TestSuite {
       toolbox.eval(tree) ==> value
 
     }
+
+    "Seq[Expr]" - {
+      import Q._
+      val value: AnyRef = Seq(reify(1), reify(math.random))
+      val tree = q"$value"
+      showCode(tree) ==> """_root_.scala.Seq(_root_.scala.reflect.runtime.universe.reify(1), _root_.scala.reflect.runtime.universe.reify(`package`.random))"""
+      val Seq(expr0: Expr[_], expr1: Expr[_]) = toolbox.eval(tree)// ==> value
+      toolbox.eval(expr0.tree) ==> 1
+      assert(toolbox.eval(expr1.tree).isInstanceOf[Double])
+    }
   }
 
   def main(args: Array[String]) {
