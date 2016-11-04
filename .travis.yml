@@ -1,5 +1,10 @@
 sudo: false
 
+addons:
+ apt:
+   packages:
+     - graphviz
+
 language: scala
 
 jdk:
@@ -14,7 +19,8 @@ cache:
     - $HOME/.ivy2/cache
     - $HOME/.sbt/boot/
 
-script: sbt +test
+script:
+  - sbt +test
 
 before_deploy:
 
