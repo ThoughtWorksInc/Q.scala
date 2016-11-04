@@ -10,7 +10,7 @@ libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
 libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value % Test
 
-libraryDependencies += "com.lihaoyi" %% "utest" % "0.4.3" % Test
+libraryDependencies += "com.lihaoyi" %% "utest" % "0.4.4" % Test
 
 testFrameworks += new TestFramework("utest.runner.Framework")
 
