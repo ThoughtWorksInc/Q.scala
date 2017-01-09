@@ -14,8 +14,8 @@ libraryDependencies += "com.thoughtworks.q" %% "q" % "latest.release"
 import com.thoughtworks.Q._
 import scala.reflect.runtime.universe._
 
-val data: Seq[Either[Int, String]] = Seq(Left(42), Right("string data")) 
+val data: Seq[Either[Double, String]] = Seq(Left(math.random), Right("string data")) 
 
-// Output: _root_.scala.Seq(_root_.scala.util.Left(42), _root_.scala.util.Right("string data"))
+// Output: _root_.scala.Seq(_root_.scala.util.Left(0.6437966035784641), _root_.scala.util.Right("string data"))
 println(q"$data")
 ```
