@@ -1,6 +1,7 @@
 # Q.scala <a href="http://thoughtworks.com/"><img align="right" src="https://www.thoughtworks.com/imgs/tw-logo.png" title="ThoughtWorks" height="15"/></a>
 
 [![Build Status](https://travis-ci.org/ThoughtWorksInc/Q.scala.svg?branch=master)](https://travis-ci.org/ThoughtWorksInc/Q.scala)
+[![Latest version](https://index.scala-lang.org/thoughtworksinc/q.scala/q/latest.svg)](https://index.scala-lang.org/thoughtworksinc/q.scala/q)
 [![Scaladoc](https://javadoc.io/badge/com.thoughtworks.q/q_2.11.svg?label=scaladoc)](https://javadoc.io/page/com.thoughtworks.q/q_2.11/latest/com/thoughtworks/Q$.html)
 
 **Q.scala** is a library to convert any value to code.
