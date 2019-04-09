@@ -109,31 +109,31 @@ object Q {
           import scala.reflect.runtime.currentMirror
           val elementTypeTree = fullyQualifiedSymbolTreeWithRootPrefix(currentMirror.classSymbol(array.getClass.getComponentType))
           val elementTrees = (for {
-            element <- array
+            element <- array.view
           } yield {
             treeOf(element)
-          }) (collection.breakOut(List.canBuildFrom))
+          }).toList
           q"""_root_.scala.Array[$elementTypeTree](..$elementTrees)"""
         case set: Set[_] =>
           val elementTrees = (for {
-            element <- set
+            element <- set.view
           } yield {
             treeOf(element)
-          }) (collection.breakOut(List.canBuildFrom))
+          }).toList
           q"""_root_.scala.Predef.Set(..$elementTrees)"""
         case seq: Seq[_] =>
           val elementTrees = (for {
-            element <- seq
+            element <- seq.view
           } yield {
             treeOf(element)
-          }) (collection.breakOut(List.canBuildFrom))
+          }).toList
           q"""_root_.scala.Seq(..$elementTrees)"""
         case map: Map[_, _] =>
           val keyValueTrees = (for {
-            (key, value) <- map
+            (key, value) <- map.view
           } yield {
             q"""${treeOf(key)} -> ${treeOf(value)}"""
-          }) (collection.breakOut(List.canBuildFrom))
+          }).toList
           q"""_root_.scala.Predef.Map(..$keyValueTrees)"""
         case _ =>
           val classSymbol = reflect.runtime.currentMirror.classSymbol(value.getClass)
