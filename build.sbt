@@ -2,13 +2,29 @@ organization in ThisBuild := "com.thoughtworks.q"
 
 name := "q"
 
-addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.0" cross CrossVersion.full)
+scalacOptions ++= {
+  import Ordering.Implicits._
+  if (VersionNumber(scalaVersion.value).numbers >= Seq(2L, 13L)) {
+    Seq("-Ymacro-annotations")
+  } else {
+    Nil
+  }
+}
+
+libraryDependencies ++= {
+  import Ordering.Implicits._
+  if (VersionNumber(scalaVersion.value).numbers >= Seq(2L, 13L)) {
+    Nil
+  } else {
+    Seq(compilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full))
+  }
+}
 
 libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
 libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value % Test
 
-libraryDependencies += "com.lihaoyi" %% "utest" % "0.4.4" % Test
+libraryDependencies += "com.lihaoyi" %% "utest" % "0.6.7" % Test
 
 testFrameworks += new TestFramework("utest.runner.Framework")
 
