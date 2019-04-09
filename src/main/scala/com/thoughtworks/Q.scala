@@ -8,7 +8,7 @@ import scala.reflect.api.{Symbols, TreeCreator, Universe}
 import scala.reflect.internal.annotations.compileTimeOnly
 
 /**
-  * Serialize a runtime to a compiler-time Scala AST
+  * Serialize a runtime value to a compiler-time Scala AST
   *
   * @author 杨博 (Yang Bo) &lt;pop.atry@gmail.com&gt;
   */
