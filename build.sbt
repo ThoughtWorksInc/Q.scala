@@ -24,7 +24,14 @@ libraryDependencies += "org.scala-lang" % "scala-reflect" % scalaVersion.value
 
 libraryDependencies += "org.scala-lang" % "scala-compiler" % scalaVersion.value % Test
 
-libraryDependencies += "com.lihaoyi" %% "utest" % "0.6.7" % Test
+libraryDependencies += {
+  import Ordering.Implicits._
+  if (VersionNumber(scalaVersion.value).numbers < Seq(2L, 12L)) {
+    "com.lihaoyi" %% "utest" % "0.6.8" % Test
+  } else {
+    "com.lihaoyi" %% "utest" % "0.6.9" % Test
+  }
+}
 
 testFrameworks += new TestFramework("utest.runner.Framework")
 
